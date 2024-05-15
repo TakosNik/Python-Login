@@ -1,2 +1,2 @@
 # Python-Login
-A python login and register project with html.
+A python login and register project with html and mysql.
