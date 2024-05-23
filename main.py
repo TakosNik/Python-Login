@@ -36,7 +36,7 @@ def login():
             session['loggedin'] = True
             session['id'] = account['id']
             session['username'] = account['username']
-            return 'Logged in successfully!'
+            return redirect(url_for('home'))
         else:
             msg = 'Incorrect username/password!'
 
@@ -86,3 +86,26 @@ def register():
         msg = 'Please fill out the form!'
 
     return render_template('register.html', msg=msg)
+
+
+# http://localhost:5000/pythinlogin/home - home page for logged in users
+@app.route('/pythonlogin/home')
+def home():
+    # Check if user is logged in
+    if 'loggedin' in session:
+        return render_template('home.html', username=session['username'])
+    # User is not loggedin redirect to login page
+    return redirect(url_for('login'))
+
+
+# http://localhost:5000/pythinlogin/profile - profile page
+@app.route('/pythonlogin/profile')
+def profile():
+    # Check if the user is logged in
+    if 'loggedin' in session:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM accounts WHERE id = %s', (session['id'],))
+        account = cursor.fetchone()
+        return render_template('profile.html', account=account)
+    # User is not logged in redirect to login page
+    return redirect(url_for('login'))
